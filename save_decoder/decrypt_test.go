@@ -4,7 +4,6 @@ import (
 	_ "embed"
 	"fmt"
 	"github.com/stretchr/testify/assert"
-	"os"
 	"testing"
 )
 
@@ -20,12 +19,8 @@ var (
 )
 
 func TestDecrypt(t *testing.T) {
-	curSave, err := os.ReadFile("C:\\Users\\Nicnl\\AppData\\LocalLow\\ZeekerssRBLX\\Lethal Company\\LCSaveFile3")
-	assert.NoError(t, err)
-
-	output, err := Decrypt(curSave)
+	output, err := Decrypt(v64_slot1)
 	assert.NoError(t, err)
 
 	fmt.Println(string(output))
-	os.WriteFile("C:\\Users\\Nicnl\\GolandProjects\\lethal_company_save_manager\\save_decoder\\out.json", []byte(output), 0644)
 }

@@ -1,0 +1,13 @@
+Deadline 3 days:
+"DeadlineTime":{"__type":"int","value":3240}
+
+Deadline 2 days:
+"DeadlineTime":{"__type":"int","value":2257}
+"DeadlineTime":{"__type":"int","value":2160}
+
+Deadline 1 days:
+"DeadlineTime":{"__type":"int","value":1274}
+"DeadlineTime":{"__type":"int","value":1080}
+
+Deadline 0 days:
+"DeadlineTime":{"__type":"int","value":0}
