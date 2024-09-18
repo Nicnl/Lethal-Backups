@@ -1,9 +1,19 @@
-<script setup>
-import TheWelcome from '../components/TheWelcome.vue'
-</script>
-
 <template>
   <main>
-    <TheWelcome />
+    tongapomp
+
+    <button class="button is-danger">oula</button>
   </main>
 </template>
+
+<script>
+export default {
+  name: 'HomeView',
+
+  data() {
+    return {
+
+    };
+  },
+}
+</script>
