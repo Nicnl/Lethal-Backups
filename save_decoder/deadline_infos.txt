@@ -11,3 +11,5 @@ Deadline 1 days:
 
 Deadline 0 days:
 "DeadlineTime":{"__type":"int","value":0}
+
+=> math.Floor(DeadlineTime * 0.75 / 24) = nb of days

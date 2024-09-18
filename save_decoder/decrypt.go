@@ -43,7 +43,7 @@ func PKCS7Unpad(data []byte, blockSize int) ([]byte, error) {
 	return data[:len(data)-paddingLength], nil
 }
 
-func Decrypt(encoded []byte) (string, error) {
+func Decrypt(encoded []byte) ([]byte, error) {
 	// Extract IV (Initialization Vector) from the first 16 bytes of data
 	iv := encoded[:16]
 	encryptedData := encoded[16:]
@@ -54,7 +54,7 @@ func Decrypt(encoded []byte) (string, error) {
 	// Create AES cipher block
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		return "", fmt.Errorf("failed to create AES cipher: %w", err)
+		return nil, fmt.Errorf("failed to create AES cipher: %w", err)
 	}
 
 	// Use CBC mode
@@ -67,9 +67,9 @@ func Decrypt(encoded []byte) (string, error) {
 	// Unpad the decrypted data (PKCS7 padding)
 	decrypted, err = PKCS7Unpad(decrypted, aes.BlockSize)
 	if err != nil {
-		return "", fmt.Errorf("failed to unpad decrypted data: %w", err)
+		return nil, fmt.Errorf("failed to unpad decrypted data: %w", err)
 	}
 
 	// Convert decrypted data to string (assuming it was a UTF-8 encoded string)
-	return string(decrypted), nil
+	return decrypted, nil
 }
