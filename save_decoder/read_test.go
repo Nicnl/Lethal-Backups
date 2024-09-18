@@ -7,7 +7,7 @@ import (
 )
 
 func TestRead(t *testing.T) {
-	jsonSave, err := Decrypt(v64_slot1)
+	jsonSave, err := Decrypt(EncryptedSave{v64_slot1})
 	assert.NoError(t, err)
 
 	saveInfo, err := Read(jsonSave)

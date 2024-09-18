@@ -7,16 +7,16 @@ import (
 
 func TestEncrypt(t *testing.T) {
 	// First, decrypt an existing known save
-	decoded1, err := Decrypt(v64_slot1)
+	jsonSave1, err := Decrypt(EncryptedSave{v64_slot1})
 	assert.NoError(t, err)
 
 	// Then, encrypt it back
-	encoded, err := Encrypt(decoded1)
+	encryptedSave, err := Encrypt(jsonSave1)
 	assert.NoError(t, err)
 
 	// Finally, decrypt the encrypted save and compare it with the original decrypted save
-	decoded2, err := Decrypt(encoded)
+	jsonSave2, err := Decrypt(encryptedSave)
 	assert.NoError(t, err)
 
-	assert.Equal(t, decoded1, decoded2)
+	assert.Equal(t, jsonSave1, jsonSave2)
 }

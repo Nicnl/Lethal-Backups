@@ -19,14 +19,14 @@ func base64LineBreaks(input string, length int) string {
 	return buf.String()
 }
 
-func CompressSave(decoded []byte) (string, error) {
+func CompressSave(jsonSave JsonSave) (string, error) {
 	buf := bytes.Buffer{}
 	gzipWriter, err := gzip.NewWriterLevel(&buf, gzip.BestCompression)
 	if err != nil {
 		return "", err
 	}
 
-	_, err = gzipWriter.Write(decoded)
+	_, err = gzipWriter.Write(jsonSave.Data)
 	if err != nil {
 		return "", err
 	}
@@ -43,24 +43,24 @@ func CompressSave(decoded []byte) (string, error) {
 	return base64String, nil
 }
 
-func DecompressSave(base64Save string) ([]byte, error) {
+func DecompressSave(base64Save string) (JsonSave, error) {
 	// remove line breaks
 	gzipSave, err := base64.StdEncoding.DecodeString(base64Save)
 	if err != nil {
-		return nil, err
+		return JsonSave{}, err
 	}
 
 	gzipReader, err := gzip.NewReader(bytes.NewBuffer(gzipSave))
 	if err != nil {
-		return nil, err
+		return JsonSave{}, err
 	}
 	defer gzipReader.Close()
 
 	var decompressed bytes.Buffer
 	_, err = decompressed.ReadFrom(gzipReader)
 	if err != nil {
-		return nil, err
+		return JsonSave{}, err
 	}
 
-	return decompressed.Bytes(), nil
+	return JsonSave{decompressed.Bytes()}, nil
 }

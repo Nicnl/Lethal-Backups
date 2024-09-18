@@ -19,8 +19,8 @@ var (
 )
 
 func TestDecrypt(t *testing.T) {
-	output, err := Decrypt(v64_slot1)
+	jsonSave, err := Decrypt(EncryptedSave{v64_slot1})
 	assert.NoError(t, err)
 
-	fmt.Println(string(output))
+	fmt.Println(string(jsonSave.Data))
 }

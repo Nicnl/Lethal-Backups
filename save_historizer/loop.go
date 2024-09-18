@@ -53,7 +53,7 @@ func Loop() error {
 		if !ok || saveDate.After(prevDate) {
 			//fmt.Println("saveSlot =", saveSlot)
 
-			err = CheckSave(saveDate, saveSlot, "", filepath.Join(localLowPath, file.Name()), true)
+			err = CheckSave(saveDate, saveSlot, "", filepath.Join(localLowPath, file.Name()), false)
 			if err != nil {
 				fmt.Println("  Error when checking save :", err)
 				continue

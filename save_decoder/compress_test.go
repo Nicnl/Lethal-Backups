@@ -8,23 +8,23 @@ import (
 
 func TestCompress(t *testing.T) {
 	// First, decrypt an existing known save
-	jsonSave, err := Decrypt(v64_slot1)
+	jsonSave, err := Decrypt(EncryptedSave{v64_slot1})
 	assert.NoError(t, err)
 
 	//fmt.Println(string(jsonSave))
 
 	// Then, compress it
-	compressed, err := CompressSave(jsonSave)
+	compressedSave, err := CompressSave(jsonSave)
 	assert.NoError(t, err)
 
-	fmt.Println(compressed)
+	fmt.Println(compressedSave)
 
 	// Decompress it
-	decompressed, err := DecompressSave(compressed)
+	jsonSave2, err := DecompressSave(compressedSave)
 	assert.NoError(t, err)
 
 	//fmt.Println(string(decompressed))
 
 	// Finally, compare the decompressed save with the original decrypted save
-	assert.Equal(t, jsonSave, decompressed)
+	assert.Equal(t, jsonSave.Data, jsonSave2.Data)
 }

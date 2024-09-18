@@ -9,6 +9,14 @@ import (
 	"golang.org/x/crypto/pbkdf2"
 )
 
+type EncryptedSave struct {
+	Data []byte
+}
+
+type JsonSave struct {
+	Data []byte
+}
+
 // Parameters for Lethal Company
 const (
 	DK_LEN     = 16
@@ -43,10 +51,10 @@ func PKCS7Unpad(data []byte, blockSize int) ([]byte, error) {
 	return data[:len(data)-paddingLength], nil
 }
 
-func Decrypt(encoded []byte) ([]byte, error) {
+func Decrypt(encoded EncryptedSave) (JsonSave, error) {
 	// Extract IV (Initialization Vector) from the first 16 bytes of data
-	iv := encoded[:16]
-	encryptedData := encoded[16:]
+	iv := encoded.Data[:16]
+	encryptedData := encoded.Data[16:]
 
 	// Derive the key using PBKDF2 with SHA1 hash algorithm
 	key := pbkdf2.Key([]byte(PASSWORD), iv, ITERATIONS, DK_LEN, sha1.New)
@@ -54,7 +62,7 @@ func Decrypt(encoded []byte) ([]byte, error) {
 	// Create AES cipher block
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create AES cipher: %w", err)
+		return JsonSave{}, fmt.Errorf("failed to create AES cipher: %w", err)
 	}
 
 	// Use CBC mode
@@ -67,9 +75,9 @@ func Decrypt(encoded []byte) ([]byte, error) {
 	// Unpad the decrypted data (PKCS7 padding)
 	decrypted, err = PKCS7Unpad(decrypted, aes.BlockSize)
 	if err != nil {
-		return nil, fmt.Errorf("failed to unpad decrypted data: %w", err)
+		return JsonSave{}, fmt.Errorf("failed to unpad decrypted data: %w", err)
 	}
 
 	// Convert decrypted data to string (assuming it was a UTF-8 encoded string)
-	return decrypted, nil
+	return JsonSave{decrypted}, nil
 }

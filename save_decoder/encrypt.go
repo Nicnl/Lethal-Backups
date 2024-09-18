@@ -10,12 +10,12 @@ import (
 	"golang.org/x/crypto/pbkdf2"
 )
 
-func Encrypt(jsonSave []byte) ([]byte, error) {
+func Encrypt(jsonSave JsonSave) (EncryptedSave, error) {
 	// Generate random IV (Initialization Vector)
 	iv := make([]byte, 16)
 	_, err := rand.Read(iv)
 	if err != nil {
-		return nil, fmt.Errorf("failed to generate IV: %w", err)
+		return EncryptedSave{}, fmt.Errorf("failed to generate IV: %w", err)
 	}
 
 	// Derive the key using PBKDF2 with SHA1 hash algorithm
@@ -24,14 +24,14 @@ func Encrypt(jsonSave []byte) ([]byte, error) {
 	// Create AES cipher block
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create AES cipher: %w", err)
+		return EncryptedSave{}, fmt.Errorf("failed to create AES cipher: %w", err)
 	}
 
 	// Use CBC mode
 	mode := cipher.NewCBCEncrypter(block, iv)
 
 	// Pad the data (PKCS7 padding)
-	paddedData := PKCS7Pad(jsonSave, aes.BlockSize)
+	paddedData := PKCS7Pad(jsonSave.Data, aes.BlockSize)
 
 	// Encrypt the data
 	encrypted := make([]byte, len(paddedData))
@@ -40,7 +40,7 @@ func Encrypt(jsonSave []byte) ([]byte, error) {
 	// Prepend IV to the encrypted data
 	encrypted = append(iv, encrypted...)
 
-	return encrypted, nil
+	return EncryptedSave{encrypted}, nil
 }
 
 // PKCS7Pad adds padding according to the PKCS7 standard.

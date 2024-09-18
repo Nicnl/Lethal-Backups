@@ -76,7 +76,7 @@ func init() {
 			continue
 		}
 
-		err = CheckSave(timestamp, slot, hash, filepath.Join(saveHistoryDir, fileName), false)
+		err = CheckSave(timestamp, slot, hash, filepath.Join(saveHistoryDir, fileName), true)
 		if err != nil {
 			fmt.Println("Error checking save for", fileName, ":", err)
 			continue
@@ -88,7 +88,7 @@ func init() {
 	fmt.Println()
 }
 
-func CheckSave(timestamp time.Time, slot string, hash string, filePath string, shouldBackup bool) error {
+func CheckSave(timestamp time.Time, slot string, hash string, filePath string, isBackup bool) error {
 	timestamp = timestamp.UTC().Truncate(time.Second)
 
 	if hash != "" {
@@ -102,13 +102,30 @@ func CheckSave(timestamp time.Time, slot string, hash string, filePath string, s
 	fileName := filepath.Base(filePath)
 
 	// Load the save file
-	rawSave, err := os.ReadFile(filePath)
+	rawFile, err := os.ReadFile(filePath)
 	if err != nil {
-		return fmt.Errorf("error reading save file %s => %s", fileName, err)
+		return fmt.Errorf("error reading raw file %s => %s", fileName, err)
+	}
+
+	// Decrypt the save
+	var jsonSave save_decoder.JsonSave
+
+	if isBackup {
+		decompressed, err := decompressGzip(rawFile)
+		if err != nil {
+			return fmt.Errorf("error decompressing save file %s => %s", fileName, err)
+		}
+
+		jsonSave = save_decoder.JsonSave{Data: decompressed}
+	} else {
+		jsonSave, err = save_decoder.Decrypt(save_decoder.EncryptedSave{Data: rawFile})
+		if err != nil {
+			return fmt.Errorf("error decrypting save file %s => %s", fileName, err)
+		}
 	}
 
 	if hash == "" {
-		hash = fmt.Sprintf("%032x", md5.Sum(rawSave))
+		hash = fmt.Sprintf("%032x", md5.Sum(jsonSave.Data))
 	}
 
 	_, conflict := knownSaves[hash]
@@ -117,14 +134,8 @@ func CheckSave(timestamp time.Time, slot string, hash string, filePath string, s
 		return nil
 	}
 
-	// Decrypt the save
-	decrypted, err := save_decoder.Decrypt(rawSave)
-	if err != nil {
-		return fmt.Errorf("error decrypting save file %s => %s", fileName, err)
-	}
-
 	// Read the save
-	infos, err := save_decoder.Read(decrypted)
+	saveInfos, err := save_decoder.Read(jsonSave)
 	if err != nil {
 		return fmt.Errorf("error reading save file %s => %s", fileName, err)
 	}
@@ -135,15 +146,21 @@ func CheckSave(timestamp time.Time, slot string, hash string, filePath string, s
 		Time:     timestamp,
 		Slot:     slot,
 		Hash:     hash,
-		Infos:    infos,
+		Infos:    saveInfos,
 	}
 
-	if shouldBackup {
+	if !isBackup {
 		// Backup the save
 		saveContainer.Filename = fmt.Sprintf("%s__%s__%s.lethal", timestamp.Format("2006-01-02_15-04-05"), slot, hash)
 
+		compressed, err := compressGzip(jsonSave.Data)
+		if err != nil {
+			return fmt.Errorf("error compressing save file %s => %s", fileName, err)
+		}
+
+		fmt.Println("New save:")
 		fmt.Println("  -", saveContainer.Filename)
-		err = os.WriteFile(filepath.Join(saveHistoryDir, saveContainer.Filename), rawSave, 0644)
+		err = os.WriteFile(filepath.Join(saveHistoryDir, saveContainer.Filename), compressed, 0644)
 		if err != nil {
 			return fmt.Errorf("error backing up save file %s => %s", fileName, err)
 		}
@@ -162,7 +179,7 @@ func CheckSave(timestamp time.Time, slot string, hash string, filePath string, s
 	//}
 
 	//fmt.Printf("  Found save => %s (%s)\n", slot, timestamp)
-	//fmt.Printf("    Data = %+v\n", infos)
+	//fmt.Printf("    Data = %+v\n", saveInfos)
 	//fmt.Println()
 	return nil
 }
