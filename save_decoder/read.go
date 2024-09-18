@@ -20,14 +20,9 @@ type LethalSaveInfo struct {
 	ShipScrapValues      IntArrayValue `json:"shipScrapValues"`      // Prix du scrap au sol
 }
 
-func Read(rawSave []byte) (LethalSaveInfo, error) {
-	decoded, err := Decrypt(rawSave)
-	if err != nil {
-		return LethalSaveInfo{}, err
-	}
-
+func Read(jsonSave []byte) (LethalSaveInfo, error) {
 	var saveInfo LethalSaveInfo
-	err = json.Unmarshal([]byte(decoded), &saveInfo)
+	err := json.Unmarshal(jsonSave, &saveInfo)
 	if err != nil {
 		return LethalSaveInfo{}, err
 	}
