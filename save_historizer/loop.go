@@ -5,12 +5,20 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 )
 
-var knownSavesDates = make(map[string]time.Time)
+var (
+	knownSavesDates = make(map[string]time.Time)
+
+	saveLock = &sync.Mutex{}
+)
 
 func Loop() error {
+	saveLock.Lock()
+	defer saveLock.Unlock()
+
 	entry, err := os.ReadDir(localLowPath)
 	if err != nil {
 		return err
@@ -30,10 +38,7 @@ func Loop() error {
 			continue
 		}
 
-		fmt.Println()
-
-		saveSlot := strings.TrimPrefix(file.Name(), "LCSaveFile")
-		fmt.Println("Check save : slot", saveSlot)
+		saveSlot := "slot" + strings.TrimPrefix(file.Name(), "LCSaveFile")
 
 		fileInfo, err := file.Info()
 		if err != nil {
@@ -42,10 +47,11 @@ func Loop() error {
 		}
 
 		// Vérifier la date de la save en cours et la comparer à la dernière date connue
-		saveDate := fileInfo.ModTime()
+		saveDate := fileInfo.ModTime().UTC().Truncate(time.Second)
 		prevDate, ok := knownSavesDates[saveSlot]
+		//fmt.Println("Check save", saveSlot, ":", saveDate, ">", prevDate, "?")
 		if !ok || saveDate.After(prevDate) {
-			knownSavesDates[saveSlot] = saveDate
+			//fmt.Println("saveSlot =", saveSlot)
 
 			err = CheckSave(saveDate, saveSlot, "", filepath.Join(localLowPath, file.Name()), true)
 			if err != nil {
@@ -53,8 +59,9 @@ func Loop() error {
 				continue
 			}
 		}
-		fmt.Println(" => ok")
 	}
+
+	//fmt.Println("loop done")
 
 	return nil
 }

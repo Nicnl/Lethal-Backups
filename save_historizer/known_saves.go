@@ -11,11 +11,11 @@ import (
 )
 
 type SaveContainer struct {
-	Filename string
-	Time     time.Time
-	Slot     string
-	Hash     string
-	Infos    save_decoder.LethalSaveInfo
+	Filename string                      `json:"filename"`
+	Time     time.Time                   `json:"time"`
+	Slot     string                      `json:"slot"`
+	Hash     string                      `json:"hash"`
+	Infos    save_decoder.LethalSaveInfo `json:"infos"`
 }
 
 var (
@@ -49,7 +49,7 @@ func init() {
 		os.Exit(1)
 	}
 
-	fmt.Println("Listing known saves:")
+	fmt.Println("Listing existing backups:")
 	for _, file := range files {
 		if file.IsDir() {
 			continue
@@ -67,10 +67,7 @@ func init() {
 		}
 
 		rawTimestamp, slot, hash := split[0], split[1], split[2]
-
-		if strings.HasPrefix(slot, "slot") {
-			slot = strings.TrimPrefix(slot, "slot")
-		}
+		hash = strings.TrimSuffix(hash, ".lethal")
 
 		// Parse the timestamp
 		timestamp, err := time.Parse("2006-01-02_15-04-05", rawTimestamp)
@@ -80,13 +77,24 @@ func init() {
 		}
 
 		err = CheckSave(timestamp, slot, hash, filepath.Join(saveHistoryDir, fileName), false)
+		if err != nil {
+			fmt.Println("Error checking save for", fileName, ":", err)
+			continue
+		} else {
+			fmt.Println("  -", fileName)
+		}
 	}
+	fmt.Println("Done listing backups.")
+	fmt.Println()
 }
 
 func CheckSave(timestamp time.Time, slot string, hash string, filePath string, shouldBackup bool) error {
+	timestamp = timestamp.UTC().Truncate(time.Second)
+
 	if hash != "" {
-		_, conflict := knownSaves[slot]
+		_, conflict := knownSaves[hash]
 		if conflict {
+			fmt.Println("Hash conflict A for hash=", hash)
 			return nil
 		}
 	}
@@ -103,8 +111,9 @@ func CheckSave(timestamp time.Time, slot string, hash string, filePath string, s
 		hash = fmt.Sprintf("%032x", md5.Sum(rawSave))
 	}
 
-	_, conflict := knownSaves[slot]
+	_, conflict := knownSaves[hash]
 	if conflict {
+		fmt.Println("Hash conflict B for hash=", hash)
 		return nil
 	}
 
@@ -121,7 +130,7 @@ func CheckSave(timestamp time.Time, slot string, hash string, filePath string, s
 	}
 
 	// Add the save to memory
-	knownSaves[slot] = SaveContainer{
+	saveContainer := SaveContainer{
 		Filename: fileName,
 		Time:     timestamp,
 		Slot:     slot,
@@ -131,15 +140,29 @@ func CheckSave(timestamp time.Time, slot string, hash string, filePath string, s
 
 	if shouldBackup {
 		// Backup the save
-		backupName := fmt.Sprintf("%s__%s__%s.lethal", timestamp.Format("2006-01-02_15-04-05"), slot, hash)
-		err = os.WriteFile(filepath.Join(saveHistoryDir, backupName), rawSave, 0644)
+		saveContainer.Filename = fmt.Sprintf("%s__%s__%s.lethal", timestamp.Format("2006-01-02_15-04-05"), slot, hash)
+
+		fmt.Println("  -", saveContainer.Filename)
+		err = os.WriteFile(filepath.Join(saveHistoryDir, saveContainer.Filename), rawSave, 0644)
 		if err != nil {
 			return fmt.Errorf("error backing up save file %s => %s", fileName, err)
 		}
+
+		knownSavesDates[slot] = timestamp
+	} else {
+		curDate, ok := knownSavesDates[slot]
+		if !ok || timestamp.After(curDate) {
+			knownSavesDates[slot] = timestamp
+		}
 	}
 
-	fmt.Printf("  Found save => %s (%s)\n", slot, timestamp)
-	fmt.Printf("    Data = %+v\n", infos)
-	fmt.Println()
+	//knownSaves[hash] = saveContainer
+	//for hash := range knownSaves {
+	//	fmt.Println("  Known save =>", hash, "(", knownSaves[hash].Time, ")")
+	//}
+
+	//fmt.Printf("  Found save => %s (%s)\n", slot, timestamp)
+	//fmt.Printf("    Data = %+v\n", infos)
+	//fmt.Println()
 	return nil
 }
