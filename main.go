@@ -34,6 +34,7 @@ func main() {
 	r.GET("/items", routes.GetItems)
 	r.GET("/item_icon/:itemName", routes.GetItemIcon)
 	r.GET("/planets", routes.GetPlanets)
+	r.POST("/restore/:hash", routes.PostRestoreHash)
 
 	err := r.Run("127.0.0.1:51245")
 	if err != nil {

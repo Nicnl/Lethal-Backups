@@ -18,6 +18,7 @@
       <table class="table is-fullwidth is-striped is-hoverable">
         <thead>
         <tr>
+          <th style="width: 20px;"></th>
           <th style="width: 200px;">Date</th>
           <th style="width: 180px;">Planet</th>
           <th style="width: 100px;">Money</th>
@@ -31,6 +32,13 @@
         <tbody>
 
         <tr v-for="entry in backupSlots[activeTab]" style="height: 89px;">
+
+          <th class="is-vcentered">
+            <button class="button is-success is-outlined" @click="showModalRestore = entry" style="width: 35px;">
+              <i class="fas fa-undo"></i>
+            </button>
+          </th>
+
           <th class="is-vcentered is-family-monospace">{{ entry.time.replaceAll('T', ' ').replaceAll('Z', '') }}</th>
           <th class="is-vcentered">
             <template v-if="entry.infos.CurrentPlanetID.value + '' in planets">
@@ -59,7 +67,11 @@
           </th>
 
           <th class="is-vcentered">
-            <div class="item-icon" v-for="(amount, equipmentName) in extractEquipment(entry)" style="height: 66px;">
+            <div
+                v-for="(amount, equipmentName) in extractEquipment(entry)"
+                class="item-icon"
+                style="height: 66px;"
+            >
               <img
                   :src="$axios.defaults.baseURL + '/item_icon/' + equipmentName + '.webp'"
                   style="height: 66px;"
@@ -78,6 +90,14 @@
       :indexed-items="indexedItems"
       :entry="showModalItems"
       @close="showModalItems = null"
+  />
+
+  <ModalRestore
+      v-if="showModalRestore !== null"
+      :indexed-items="indexedItems"
+      :planets="planets"
+      :entry="showModalRestore"
+      @close="showModalRestore = null"
   />
 </template>
 
@@ -103,6 +123,7 @@
 
 <script>
 import ModalListItems from "@/components/ModalListItems.vue";
+import ModalRestore from "@/components/ModalRestore.vue";
 
 export default {
   name: 'HomeView',
@@ -117,6 +138,7 @@ export default {
 
       activeTab: "slot1",
       showModalItems: null,
+      showModalRestore: null,
     };
   },
 
@@ -248,6 +270,7 @@ export default {
 
   components: {
     ModalListItems,
+    ModalRestore,
   }
 }
 </script>
