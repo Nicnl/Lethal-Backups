@@ -1,6 +1,6 @@
 # Lethal Backups
 
-<img align="right" width="159px" src="vue/src/assets/lethal_backups.png">
+<img align="right" width="200px" src="vue/src/assets/lethal_backups.png">
 
 **Lethal Backups** is a save manager for Lethal Company.  
 
