@@ -1,7 +1,7 @@
 <template>
   <main>
     <div v-if="isLoading" class="has-text-centered" style="padding-top: 32px;">
-      Chargement des backups...<br/><br/>
+      Loading backups...<br/><br/>
       <button class="button is-loading">---</button>
     </div>
 
