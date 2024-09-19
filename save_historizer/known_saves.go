@@ -13,6 +13,7 @@ import (
 type SaveContainer struct {
 	Filename string                      `json:"filename"`
 	Time     time.Time                   `json:"time"`
+	UnixTime int64                       `json:"unixTime"`
 	Slot     string                      `json:"slot"`
 	Hash     string                      `json:"hash"`
 	Infos    save_decoder.LethalSaveInfo `json:"infos"`
@@ -94,7 +95,7 @@ func CheckSave(timestamp time.Time, slot string, hash string, filePath string, i
 	if hash != "" {
 		_, conflict := knownSaves[hash]
 		if conflict {
-			fmt.Println("Hash conflict A for hash=", hash)
+			//fmt.Println("Hash conflict A for hash=", hash)
 			return nil
 		}
 	}
@@ -130,7 +131,7 @@ func CheckSave(timestamp time.Time, slot string, hash string, filePath string, i
 
 	_, conflict := knownSaves[hash]
 	if conflict {
-		fmt.Println("Hash conflict B for hash=", hash)
+		//fmt.Println("Hash conflict B for hash=", hash)
 		return nil
 	}
 
@@ -144,6 +145,7 @@ func CheckSave(timestamp time.Time, slot string, hash string, filePath string, i
 	saveContainer := SaveContainer{
 		Filename: fileName,
 		Time:     timestamp,
+		UnixTime: timestamp.Unix(),
 		Slot:     slot,
 		Hash:     hash,
 		Infos:    saveInfos,
@@ -173,7 +175,7 @@ func CheckSave(timestamp time.Time, slot string, hash string, filePath string, i
 		}
 	}
 
-	//knownSaves[hash] = saveContainer
+	knownSaves[hash] = saveContainer
 	//for hash := range knownSaves {
 	//	fmt.Println("  Known save =>", hash, "(", knownSaves[hash].Time, ")")
 	//}

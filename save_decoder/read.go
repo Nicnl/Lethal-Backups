@@ -18,6 +18,7 @@ type LethalSaveInfo struct {
 	CurrentPlanetID      IntValue      `json:"CurrentPlanetID"`      // ID de la planète actuelle
 	ShipGrabbableItemIDs IntArrayValue `json:"shipGrabbableItemIDs"` // Liste des items au sol (scrap + store items)
 	ShipScrapValues      IntArrayValue `json:"shipScrapValues"`      // Prix du scrap au sol
+	DeadlineTime         IntValue      `json:"DeadlineTime"`         // Jours restants
 }
 
 func Read(jsonSave JsonSave) (LethalSaveInfo, error) {

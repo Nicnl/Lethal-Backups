@@ -1,6 +1,7 @@
 package save_historizer
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -64,4 +65,16 @@ func Loop() error {
 	//fmt.Println("loop done")
 
 	return nil
+}
+
+func ListKnownSaves() ([]byte, error) {
+	saveLock.Lock()
+	defer saveLock.Unlock()
+
+	jsonResp, err := json.Marshal(knownSaves)
+	if err != nil {
+		return nil, err
+	}
+
+	return jsonResp, nil
 }
