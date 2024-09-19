@@ -187,7 +187,7 @@ export default {
         this.planets = resp.data;
       } catch (error) {
         console.error(error);
-        this.$notify({type: 'error', text: 'Erreur lors de l\'obtention des planètes.'});
+        this.$notify({type: 'error', text: 'Error when listing planets.'});
       } finally {
         this.isLoading = false;
       }
@@ -199,7 +199,7 @@ export default {
         this.items = resp.data;
       } catch (error) {
         console.error(error);
-        this.$notify({type: 'error', text: 'Erreur lors de l\'obtention des items.'});
+        this.$notify({type: 'error', text: 'Error when listing items.'});
       } finally {
         this.isLoading = false;
       }
@@ -271,7 +271,7 @@ export default {
         this.isLoading = true;
         this.backupSlots = null;
         console.error(error);
-        this.$notify({type: 'error', text: 'Erreur lors de l\'obtention de la liste des backups.'});
+        this.$notify({type: 'error', text: 'Error when listing backups.'});
       } finally {
         setTimeout(() => {
           this.loadSaves();
