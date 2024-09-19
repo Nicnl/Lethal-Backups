@@ -235,6 +235,7 @@ export default {
         setTimeout(() => {
           this.loadSaves();
         }, 5000);
+        return;
       }
 
       try {
@@ -265,12 +266,13 @@ export default {
           backupSlots[slot].sort((a, b) => b.unixTime - a.unixTime);
 
         this.backupSlots = backupSlots;
+        this.isLoading = false;
       } catch (error) {
+        this.isLoading = true;
+        this.backupSlots = null;
         console.error(error);
         this.$notify({type: 'error', text: 'Erreur lors de l\'obtention de la liste des backups.'});
       } finally {
-        this.isLoading = false;
-
         setTimeout(() => {
           this.loadSaves();
         }, 5000);
