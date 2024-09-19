@@ -5,12 +5,12 @@
 **Lethal Backups** is a save manager for Lethal Company.  
 
 Features:  
-- It automatically backups your saves: when the program is running, it checks every 5 seconds.
+- It automatically backups your saves: the check happens every 5 seconds.
 - You can restore any save to a previous state.
 - Nice user interface that shows extra infos: items, equipment, money, days, etc...
 
 Gotchas:
-- Will not backups your save when the program is closed.  
+- Will not backups your saves when the program is closed.  
 - May have bugs.  
 - Not compatible with mods that save extra data outside of the main save files.  
 
