@@ -1,4 +1,6 @@
-# How to build:
+# Build instructions:
+
+(for windows)
 
 ```
 cd vue
