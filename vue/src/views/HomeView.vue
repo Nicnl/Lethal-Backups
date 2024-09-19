@@ -231,6 +231,12 @@ export default {
     },
 
     async loadSaves() {
+      if (this.showModalItems !== null || this.showModalRestore !== null) {
+        setTimeout(() => {
+          this.loadSaves();
+        }, 5000);
+      }
+
       try {
         const resp = await this.$axios.get('/saves');
 
@@ -264,6 +270,10 @@ export default {
         this.$notify({type: 'error', text: 'Erreur lors de l\'obtention de la liste des backups.'});
       } finally {
         this.isLoading = false;
+
+        setTimeout(() => {
+          this.loadSaves();
+        }, 5000);
       }
     }
   },
