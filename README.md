@@ -9,6 +9,11 @@ Features:
 - You can restore any save to a previous state.
 - Nice user interface that shows extra infos: items, equipment, money, days, etc...
 
+Gotchas:
+- Will not backups your save when the program is closed.  
+- May have bugs.  
+- Not compatible with mods that save extra data outside of the main save files.  
+
 ![lethal_backups_screenshot_1.png](doc/lethal_backups_screenshot_1.png)
 
 ![lethal_backups_screenshot_2.png](doc/lethal_backups_screenshot_2.png)
