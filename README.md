@@ -10,7 +10,7 @@ Features:
 - Nice user interface that shows extra infos: items, equipment, money, days, etc...
 
 Gotchas:
-- Will not backups your saves when the program is closed.  
+- Will not backups your saves when the program is closed: **(keep it running in the background!**
 - May have bugs.  
 - Not compatible with mods that save extra data outside of the main save files.  
 
