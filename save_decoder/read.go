@@ -28,5 +28,13 @@ func Read(jsonSave JsonSave) (LethalSaveInfo, error) {
 		return LethalSaveInfo{}, err
 	}
 
+	if saveInfo.ShipGrabbableItemIDs.Value == nil {
+		saveInfo.ShipGrabbableItemIDs.Value = []int{}
+	}
+
+	if saveInfo.ShipScrapValues.Value == nil {
+		saveInfo.ShipScrapValues.Value = []int{}
+	}
+
 	return saveInfo, nil
 }
