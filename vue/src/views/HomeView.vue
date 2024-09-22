@@ -62,7 +62,7 @@
                 style="margin-right: 8px;"
                 @click="showModalItems = entry"
             >
-              {{ entry.infos.nbLoots + ' items ◽' + entry.infos.totalLootValue }}
+              {{ nbLoots(extractItems(entry)) + ' items ◽' + entry.infos.totalLootValue }}
             </button>
           </th>
 
@@ -88,6 +88,7 @@
   <ModalListItems
       v-if="showModalItems !== null"
       :indexed-items="indexedItems"
+      :items="extractItems(showModalItems)"
       :entry="showModalItems"
       @close="showModalItems = null"
   />
@@ -228,6 +229,34 @@ export default {
       }
 
       return equipment;
+    },
+
+    extractItems(entry) {
+      let equipment = {};
+
+      // entry.infos.shipGrabbableItemIDs.value is an array
+      for (let id of entry.infos.shipGrabbableItemIDs.value) {
+        let itemName = 'unknown';
+
+        if (id in this.indexedItems) {
+          if (this.indexedItems[id].tool) continue;
+          itemName = this.indexedItems[id].name;
+        }
+
+        if (itemName in equipment)
+          equipment[itemName]++;
+        else
+          equipment[itemName] = 1;
+      }
+
+      return equipment;
+    },
+
+    nbLoots(items) {
+      let nb = 0;
+      for (const name in items)
+        nb += items[name];
+      return nb;
     },
 
     async loadSaves() {

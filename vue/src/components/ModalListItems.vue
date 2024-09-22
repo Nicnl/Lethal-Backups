@@ -4,13 +4,13 @@
     <div class="modal-card">
       <header class="modal-card-head">
         <p class="modal-card-title">
-          {{ entry.infos.nbLoots + ' items ◽' + entry.infos.totalLootValue }}
+          {{ nbLoots + ' items ◽' + entry.infos.totalLootValue }}
         </p>
         <button class="delete" aria-label="close" @click="close"></button>
       </header>
       <section class="modal-card-body">
 
-        <div class="item-icon" v-for="(amount, equipmentName) in extractItems(entry)" style="height: 80px;margin-bottom: 16px;">
+        <div class="item-icon" v-for="(amount, equipmentName) in items" style="height: 80px;margin-bottom: 16px;">
           <img
               :src="$axios.defaults.baseURL + '/item_icon/' + equipmentName + '.webp'"
               style="height: 70px;padding: 8px;"
@@ -54,37 +54,21 @@
 export default {
   name: 'ModalListItems',
 
-  props: ['indexedItems', 'entry'],
+  props: ['indexedItems', 'items', 'entry'],
   emits: ['close'],
 
   methods: {
     close() {
       this.$emit('close');
     },
+  },
 
-    extractItems(entry) {
-      let equipment = {};
-
-      // entry.infos.shipGrabbableItemIDs.value is an array
-      for (let id of entry.infos.shipGrabbableItemIDs.value) {
-        let itemName = 'Unknown (ID: ' + id + ')';
-
-        if (id in this.indexedItems) {
-          itemName = this.indexedItems[id].name;
-
-          if (this.indexedItems[id].tool) continue;
-        } else {
-          // May not be an equipment, skip
-          continue;
-        }
-
-        if (itemName in equipment)
-          equipment[itemName]++;
-        else
-          equipment[itemName] = 1;
-      }
-
-      return equipment;
+  computed: {
+    nbLoots() {
+      let nb = 0;
+      for (const name in this.items)
+        nb += this.items[name];
+      return nb;
     },
   },
 }
