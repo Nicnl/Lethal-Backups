@@ -43,23 +43,34 @@
             </li>
 
             <li>
-              <b style="margin-right: 5px;">Scrap:</b>
-              {{ entry.infos.nbLoots + ' items ◽' + entry.infos.totalLootValue }}
+              <b style="margin-right: 5px;">Equipment:</b> {{ equipment.amount }} tools<br/>
+              <div
+                  v-for="(amount, name) in equipment.list"
+                  class="item-icon"
+                  style="height: 60px;margin-bottom: 16px;"
+              >
+                <img
+                    :src="$axios.defaults.baseURL + '/item_icon/' + name + '.webp'"
+                    style="height: 60px;padding: 5px;"
+                >
+                <span class="is-family-monospace item-amount">x{{ amount }}</span><br/>
+              </div>
             </li>
 
             <li>
-              <b style="margin-right: 5px;">Equipment:</b>
-              <ul>
-                <li v-for="(amount, equipmentName) in extractEquipment(entry)">
-                  <div class="item-icon" style="height: 60px;margin-bottom: 16px;">
-                    <img
-                        :src="$axios.defaults.baseURL + '/item_icon/' + equipmentName + '.webp'"
-                        style="height: 60px;padding: 5px;"
-                    >
-                    <span class="is-family-monospace item-amount">x{{ amount }}</span><br/>
-                  </div>
-                </li>
-              </ul>
+              <b style="margin-right: 5px;">Scrap:</b>
+              {{ entry.infos.nbLoots + ' items ◽' + entry.infos.totalLootValue }}<br/>
+              <div
+                  v-for="(amount, name) in items.list"
+                  class="item-icon"
+                  style="height: 60px;margin-bottom: 16px;"
+              >
+                <img
+                    :src="$axios.defaults.baseURL + '/item_icon/' + name + '.webp'"
+                    style="height: 60px;padding: 5px;"
+                >
+                <span class="is-family-monospace item-amount">x{{ amount }}</span><br/>
+              </div>
             </li>
 
           </ul>
@@ -119,32 +130,36 @@ export default {
     },
 
     extractItems(entry) {
-      let equipment = {};
+      let items = {
+        list: {},
+        amount: 0,
+      };
 
       // entry.infos.shipGrabbableItemIDs.value is an array
       for (let id of entry.infos.shipGrabbableItemIDs.value) {
-        let itemName = 'Unknown (ID: ' + id + ')';
+        let itemName = 'unknown';
 
         if (id in this.indexedItems) {
-          itemName = this.indexedItems[id].name;
-
           if (this.indexedItems[id].tool) continue;
-        } else {
-          // May not be an equipment, skip
-          continue;
+          itemName = this.indexedItems[id].name;
         }
 
-        if (itemName in equipment)
-          equipment[itemName]++;
+        if (itemName in items.list)
+          items.list[itemName]++;
         else
-          equipment[itemName] = 1;
+          items.list[itemName] = 1;
+
+        items.amount++;
       }
 
-      return equipment;
+      return items;
     },
 
     extractEquipment(entry) {
-      let equipment = {};
+      let equipment = {
+        list: {},
+        amount: 0,
+      };
 
       // entry.infos.shipGrabbableItemIDs.value is an array
       for (let id of entry.infos.shipGrabbableItemIDs.value) {
@@ -159,10 +174,12 @@ export default {
           continue;
         }
 
-        if (itemName in equipment)
-          equipment[itemName]++;
+        if (itemName in equipment.list)
+          equipment.list[itemName]++;
         else
-          equipment[itemName] = 1;
+          equipment.list[itemName] = 1;
+
+        equipment.amount++;
       }
 
       return equipment;
@@ -185,5 +202,15 @@ export default {
       }
     }
   },
+
+  computed: {
+    equipment() {
+      return this.extractEquipment(this.entry);
+    },
+
+    items() {
+      return this.extractItems(this.entry);
+    },
+  }
 }
 </script>
