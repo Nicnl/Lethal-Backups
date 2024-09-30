@@ -1,4 +1,4 @@
-//go:generate goversioninfo
+//go:generate goversioninfo -icon=icon.ico
 
 package main
 
