@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/pkg/browser"
 	"io/fs"
 	"lethal_company_save_manager/routes"
 	"lethal_company_save_manager/save_historizer"
@@ -87,7 +88,7 @@ func openbrowser(url string) {
 	case "linux":
 		err = exec.Command("xdg-open", url).Start()
 	case "windows":
-		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+		err = browser.OpenURL(url)
 	case "darwin":
 		err = exec.Command("open", url).Start()
 	default:
