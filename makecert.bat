@@ -1,0 +1,1 @@
+"C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\MakeCert.exe" -r -pe -n "CN=Nicnl,E=nicnl25@gmail.com,OU=Nicnl,O=Nicnl,C=France" -ss CA -sr CurrentUser -a sha256 -cy authority -sky signature -sv MyCA.pvk MyCA.cer

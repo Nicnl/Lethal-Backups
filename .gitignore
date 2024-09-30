@@ -3,3 +3,9 @@ backups
 vue/dist
 lethal_backups.exe
 build
+
+MyCA.cer
+MyCA.pvk
+MyCA.pfx
+
+resource.syso
