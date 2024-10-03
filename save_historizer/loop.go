@@ -80,6 +80,13 @@ func ListKnownSaves() ([]byte, error) {
 	return jsonResp, nil
 }
 
+func NbSaves() int {
+	saveLock.Lock()
+	defer saveLock.Unlock()
+
+	return len(knownSaves)
+}
+
 func ObtainSave(hash string) (SaveContainer, bool) {
 	saveLock.Lock()
 	defer saveLock.Unlock()

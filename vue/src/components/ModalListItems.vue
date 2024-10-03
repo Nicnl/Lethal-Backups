@@ -4,7 +4,8 @@
     <div class="modal-card">
       <header class="modal-card-head">
         <p class="modal-card-title">
-          {{ nbLoots + ' items ◽' + entry.infos.totalLootValue }}
+          {{ nbLoots + ' items' }}
+          <span class="has-text-primary">{{ '■ ' + entry.infos.totalLootValue }}</span>
         </p>
         <button class="delete" aria-label="close" @click="close"></button>
       </header>

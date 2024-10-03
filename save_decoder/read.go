@@ -1,6 +1,9 @@
 package save_decoder
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"sort"
+)
 
 type IntValue struct {
 	Value int `json:"value"`
@@ -30,10 +33,14 @@ func Read(jsonSave JsonSave) (LethalSaveInfo, error) {
 
 	if saveInfo.ShipGrabbableItemIDs.Value == nil {
 		saveInfo.ShipGrabbableItemIDs.Value = []int{}
+	} else {
+		sort.Ints(saveInfo.ShipGrabbableItemIDs.Value)
 	}
 
 	if saveInfo.ShipScrapValues.Value == nil {
 		saveInfo.ShipScrapValues.Value = []int{}
+	} else {
+		sort.Ints(saveInfo.ShipScrapValues.Value)
 	}
 
 	return saveInfo, nil

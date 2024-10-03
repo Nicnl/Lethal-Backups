@@ -73,8 +73,14 @@ func main() {
 		}
 	}()
 
-	time.Sleep(750 * time.Millisecond)
-	openbrowser("http://127.0.0.1:51246")
+	for {
+		time.Sleep(750 * time.Millisecond)
+
+		if save_historizer.NbSaves() > 0 {
+			openbrowser("http://127.0.0.1:51246")
+			break
+		}
+	}
 
 	// 4. Wait forever
 	select {}

@@ -22,9 +22,9 @@
           <th style="width: 200px;">Date</th>
           <th style="width: 180px;">Planet</th>
           <th style="width: 100px;">Money</th>
-          <th style="width: 80px;">Day</th>
-          <th style="width: 90px;">Deadline</th>
-          <th style="width: 150px;">Quota</th>
+          <th style="width: 85px;">Day</th>
+          <th style="width: 95px;">Deadline</th>
+          <th style="width: 110px;">Quota</th>
           <th style="width: 150px;">Scrap</th>
           <th>Equipment</th>
         </tr>
@@ -48,12 +48,16 @@
               <span class="has-text-danger">Unknown planet {{ '(' + entry.infos.CurrentPlanetID.value + ')'}}</span>
             </template>
           </th>
-          <th class="is-vcentered is-family-monospace">{{ '◽' + entry.infos.GroupCredits.value }}</th>
+          <th class="is-vcentered is-family-monospace has-text-primary">{{ '■ ' + entry.infos.GroupCredits.value }}</th>
           <th class="is-vcentered is-family-monospace">{{ 'Day ' + entry.infos.Stats_DaysSpent.value }}</th>
-          <th class="is-vcentered is-family-monospace">{{ Math.floor(entry.infos.DeadlineTime.value/0.75/60/24) + ' Days' }}</th>
-          <th class="is-vcentered is-family-monospace">{{
-              '◽' + entry.infos.QuotaFulfilled.value + ' / ' + '◽' + entry.infos.ProfitQuota.value
-            }}
+          <th class="is-vcentered is-family-monospace has-text-warning">{{ Math.floor(entry.infos.DeadlineTime.value/0.75/60/24) + ' Days' }}</th>
+          <th class="is-vcentered is-family-monospace has-text-primary">
+            <template v-if="entry.infos.QuotaFulfilled.value > 0">
+              {{ '■ ' + entry.infos.QuotaFulfilled.value + ' / ' + '■ ' + entry.infos.ProfitQuota.value }}
+            </template>
+            <template v-else>
+              {{ '■ ' + entry.infos.ProfitQuota.value }}
+            </template>
           </th>
 
           <th class="is-vcentered">
@@ -62,7 +66,10 @@
                 style="margin-right: 8px;"
                 @click="showModalItems = entry"
             >
-              {{ nbLoots(extractItems(entry)) + ' items ◽' + entry.infos.totalLootValue }}
+              {{ nbLoots(extractItems(entry)) + ' items' }}
+              <span class="has-text-primary" style="margin-left: 8px;">
+                {{ '■ ' + entry.infos.totalLootValue }}
+              </span>
             </button>
           </th>
 

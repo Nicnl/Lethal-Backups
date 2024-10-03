@@ -24,7 +24,7 @@
 
             <li>
               <b style="margin-right: 5px;">Money:</b>
-              {{ '◽' + entry.infos.GroupCredits.value }}
+              <span class="has-text-primary">{{ '■ ' + entry.infos.GroupCredits.value }}</span>
             </li>
 
             <li>
@@ -34,12 +34,20 @@
 
             <li>
               <b style="margin-right: 5px;">Deadline:</b>
-              {{ Math.floor(entry.infos.DeadlineTime.value/0.75/60/24) + ' Days' }}
+              <span class="has-text-warning">{{ Math.floor(entry.infos.DeadlineTime.value/0.75/60/24) + ' Days' }}</span>
             </li>
 
             <li>
               <b style="margin-right: 5px;">Quota:</b>
-              {{ '◽' + entry.infos.QuotaFulfilled.value + ' / ' + '◽' + entry.infos.ProfitQuota.value }}
+
+              <span class="has-text-primary">
+                <template v-if="entry.infos.QuotaFulfilled.value > 0">
+                  {{ '■ ' + entry.infos.QuotaFulfilled.value + ' / ' + '■ ' + entry.infos.ProfitQuota.value }}
+                </template>
+                <template v-else>
+                  {{ '■ ' + entry.infos.ProfitQuota.value }}
+                </template>
+              </span>
             </li>
 
             <li>
@@ -59,7 +67,8 @@
 
             <li>
               <b style="margin-right: 5px;">Scrap:</b>
-              {{ entry.infos.nbLoots + ' items ◽' + entry.infos.totalLootValue }}<br/>
+              <span class="has-text-primary">{{ entry.infos.nbLoots + ' items ■ ' + entry.infos.totalLootValue }}</span>
+              <br/>
               <div
                   v-for="(amount, name) in items.list"
                   class="item-icon"
